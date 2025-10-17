@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         APP_NAME = "nodeapp"
+        IMAGE_NAME = "react_app"
     }
     
     tools{
