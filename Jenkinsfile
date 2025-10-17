@@ -3,11 +3,18 @@ pipeline {
 
     environment {
         APP_NAME = "nodeapp"
-        IMAGE_NAME = (env.BRANCH_NAME == 'main') ? 'nodemain:v1.0' : 'nodedev:v1.0'
-        APP_PORT = (env.BRANCH_NAME == 'main') ? '3000' : '3001'
     }
 
     stages {
+    
+        stage('Setup Environment') {
+            steps {
+                script {
+                    env.APP_NAME = (env.BRANCH_NAME == 'main') ? 'nodemain' : 'nodedev'
+                    env.APP_PORT = (env.BRANCH_NAME == 'main') ? '3000' : '3001'
+                }
+            }
+        }
         stage('Checkout') {
             steps {
                 checkout scm
