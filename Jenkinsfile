@@ -4,7 +4,10 @@ pipeline {
     environment {
         APP_NAME = "nodeapp"
     }
-
+    
+    tools{
+    	nodejs 'node7'
+    }
     stages {
     
         stage('Setup Environment') {
