@@ -50,21 +50,31 @@ pipeline {
         stage('Scan Docker Image for Vulnerabilities') {
             steps {
                 script {
-                    echo "Scanning image ${IMAGE_NAME}:${env.BUILD_ID} for vulnerabilities..."
-                    def vulnerabilities = sh(
-                        script: """
-                            trivy image \
-                              --scanners vuln \
-                              --ignorefile /dev/null \
-                              --config /dev/null \
-                              --exit-code 0 \
-                              --severity HIGH,MEDIUM,LOW \
-                              --no-progress \
-                              ${IMAGE_NAME}:${env.BUILD_ID}
-                        """,
-                        returnStdout: true
-                    ).trim()
-                    echo "Vulnerability Report:\n${vulnerabilities}"
+                    def imageTag = "${IMAGE_NAME}:${BUILD_ID}"
+                    def branchName = env.BRANCH_NAME ?: 'dev'
+                    def reportFile = "trivy-${branchName}-report.html"
+        
+                    echo "🔍 Scanning image ${imageTag} for vulnerabilities (branch: ${branchName})..."
+                    sh """
+                    trivy image \
+                      --scanners vuln \
+                      --ignorefile /dev/null \
+                      --config /dev/null \
+                      --exit-code 0 \
+                      --severity HIGH,MEDIUM,LOW \
+                      --no-progress \
+                      --format html \
+                      --output ${reportFile} \
+                      ${imageTag}
+                    """
+                    publishHTML(target: [
+                      reportName: "Trivy Report - ${branchName}",
+                      reportDir: '.',
+                      reportFiles: "${reportFile}",
+                      keepAll: true,
+                      alwaysLinkToLastBuild: true,
+                      allowMissing: true
+                    ])
                 }
             }
         }
