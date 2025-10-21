@@ -52,7 +52,16 @@ pipeline {
                 script {
                     echo "Scanning image ${IMAGE_NAME}:${env.BUILD_ID} for vulnerabilities..."
                     def vulnerabilities = sh(
-                        script: "trivy image --exit-code 0 --severity HIGH,MEDIUM,LOW --no-progress ${IMAGE_NAME}:${env.BUILD_ID}",
+                        script: """
+                            trivy image \
+                              --scanners vuln \
+                              --ignorefile /dev/null \
+                              --config /dev/null \
+                              --exit-code 0 \
+                              --severity HIGH,MEDIUM,LOW \
+                              --no-progress \
+                              ${IMAGE_NAME}:${env.BUILD_ID}
+                        """,
                         returnStdout: true
                     ).trim()
                     echo "Vulnerability Report:\n${vulnerabilities}"
