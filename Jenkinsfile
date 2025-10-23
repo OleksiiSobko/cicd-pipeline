@@ -1,4 +1,4 @@
-pipeline {
+pipeline {https://github.com/OleksiiSobko/cicd-pipeline/settings
     agent any
     environment {
         APP_NAME = "nodeapp"
@@ -65,7 +65,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "🔍 Scanning Docker image for vulnerabilities..."
+                    echo "Scanning Docker image for vulnerabilities..."
                     sh 'mkdir -p trivy-report'
                     sh """
                         trivy image \
