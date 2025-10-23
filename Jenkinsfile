@@ -48,7 +48,7 @@ pipeline {
 
         stage('Build Docker Image') {
             when {
-                branch pattern: "^(dev|main)$", comparator: "REGEXP"
+                branch pattern: '^(dev|main)$', comparator: 'REGEXP'
             }
             steps {
                 script {
