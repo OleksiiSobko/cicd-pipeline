@@ -73,7 +73,7 @@ pipeline {
                             --severity HIGH,MEDIUM,LOW \
                             --no-progress \
                             --format template \
-                            --template "@contrib/html.tpl" \
+                            --template "@tools/trivy/html.tpl" \
                             -o trivy-report/index.html \
                             ${IMAGE_NAME}:${env.BUILD_ID} || true
                     """
