@@ -65,12 +65,28 @@ pipeline {
             }
             steps {
                 script {
-                    def vulnerabilities = sh(
-                        script: "trivy image --exit-code 0 --severity HIGH,MEDIUM,LOW --no-progress ${IMAGE_NAME}:${env.BUILD_ID}",
-                        returnStdout: true
-                    ).trim()
-                    echo "Vulnerability Report:\\n${vulnerabilities}"
+                    echo "🔍 Scanning Docker image for vulnerabilities..."
+                    sh 'mkdir -p trivy-report'
+                    sh """
+                        trivy image \
+                            --exit-code 0 \
+                            --severity HIGH,MEDIUM,LOW \
+                            --no-progress \
+                            --format template \
+                            --template "@contrib/html.tpl" \
+                            -o trivy-report/index.html \
+                            ${IMAGE_NAME}:${env.BUILD_ID} || true
+                    """
+                    echo "Trivy scan completed. HTML report generated in trivy-report/index.html"
                 }
+                publishHTML(target: [
+                    reportName: 'Trivy Vulnerability Report',
+                    reportDir: 'trivy-report',
+                    reportFiles: 'index.html',
+                    keepAll: true,
+                    alwaysLinkToLastBuild: true,
+                    allowMissing: true
+                ])
             }
         }
 
