@@ -61,7 +61,7 @@ pipeline {
 
         stage('Scan Docker Image for Vulnerabilities') {
             when {
-                branch pattern: "^(dev|main)$", comparator: "REGEXP"
+                branch pattern: '^(dev|main)$', comparator: 'REGEXP'
             }
             steps {
                 script {
